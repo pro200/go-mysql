@@ -20,7 +20,9 @@ type Config struct {
 	Username     string
 	Password     string
 	Database     string
-	MaxIdleConns int
+	ConnMaxHour  int // < 0 means unlimited (기본값: 1)
+	MaxOpenConns int // < 0 means unlimited (기본값: 128)
+	MaxIdleConns int // <= 0 means 10 (기본값: 10)
 }
 
 type Database struct {
@@ -43,7 +45,17 @@ func New(config Config) (*Database, error) {
 	if config.Protocol == "" {
 		config.Protocol = "tcp"
 	}
-	if config.MaxIdleConns == 0 {
+	if config.ConnMaxHour < 0 {
+		config.ConnMaxHour = 0
+	} else if config.ConnMaxHour == 0 {
+		config.ConnMaxHour = 1
+	}
+	if config.MaxOpenConns < 0 {
+		config.MaxOpenConns = 0
+	} else if config.MaxOpenConns == 0 {
+		config.MaxOpenConns = 128
+	}
+	if config.MaxIdleConns <= 0 {
 		config.MaxIdleConns = 10
 	}
 
@@ -60,9 +72,9 @@ func New(config Config) (*Database, error) {
 		return nil, fmt.Errorf("mysql ping error: %w", err)
 	}
 
-	db.SetConnMaxLifetime(time.Hour)        // 0 means unlimited
-	db.SetMaxOpenConns(128)                 // <= 0 means unlimited
-	db.SetMaxIdleConns(config.MaxIdleConns) // zero means defaultMaxIdleConns = 2; negative means 0
+	db.SetConnMaxLifetime(time.Hour * time.Duration(config.ConnMaxHour)) // 0 means unlimited
+	db.SetMaxOpenConns(128)                                              // <= 0 means unlimited
+	db.SetMaxIdleConns(config.MaxIdleConns)                              // 0 or negative means defaultMaxIdleConns = 2
 
 	database := &Database{client: db}
 

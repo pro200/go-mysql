@@ -55,7 +55,6 @@ func main() {
     // DB 연결
     db, err := mysql.New(mysql.Config{
         Host:     "127.0.0.1",
-        Port:     3306,
         Username: "root",
         Password: "1234",
         Database: "testdb",
@@ -109,7 +108,7 @@ func main() {
 ## 📚 API
 New(config Config) (*Database, error)
 - 새로운 DB 연결 생성 및 등록
-- 기본값: Port=3306, Protocol=tcp, MaxIdleConns=10, Name="main"
+- 기본값: Name="main", Port=3306, Protocol=tcp, ConnMaxHour=1, MaxOpenConns=128, MaxIdleConns=10,
 
 GetDatabase(name ...string) (*Database, error)
 - 등록된 DB 핸들 가져오기 (기본: "main")
