@@ -2,9 +2,10 @@ package mysql_test
 
 import (
 	"fmt"
-	"github.com/pro200/go-env"
-	"github.com/pro200/go-mysql"
 	"testing"
+
+	"github.com/pro200/go-env"
+	_ "github.com/pro200/go-mysql"
 )
 
 /* .config.env
