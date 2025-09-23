@@ -22,7 +22,7 @@ go get github.com/yourname/mysql
 
 ## ⚙️ 설정 및 사용 예제
 
-1. 테이블 준비
+테이블 준비
 ```sql
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -31,7 +31,7 @@ CREATE TABLE users (
 );
 ```
 
-2. 구조체 정의
+구조체 정의
 ```go
 type User struct {
     ID    int    `db:"id"`
@@ -40,7 +40,7 @@ type User struct {
 }
 ```
 
-3. 연결 및 CRUD 예제
+연결 및 CRUD 예제
 ```go
 package main
 
