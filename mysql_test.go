@@ -28,13 +28,6 @@ INSERT INTO users (id, name, email) VALUES
 	(4, 'james', 'james@naver.com');
 */
 
-// DB 컬럼과 매핑될 구조체
-type User struct {
-	ID    int    `db:"id"`
-	Name  string `db:"name"`
-	Email string `db:"email"`
-}
-
 func TestMysql(t *testing.T) {
 	config, err := env.New()
 	if err != nil {
@@ -62,16 +55,21 @@ func TestMysql(t *testing.T) {
 		t.Error("QueryRow 실패:", err)
 	}
 
-	fmt.Println("단일 사용자:", id, name, email)
+	fmt.Println("QueryRow:", id, name, email)
 
 	// 단일 Row 조회 - 구조체 포인터
-	var user User
+	var user struct {
+		ID    int    `db:"id"`
+		Name  string `db:"name"`
+		Email string `db:"email"`
+	}
+
 	err = db.QueryRow("SELECT id, name, email FROM users WHERE email = ?", "alice@example.com", &user)
 	if err != nil {
 		log.Println("QueryRow 실패:", err)
 	}
 
-	fmt.Println("단일 사용자(구조체):", user)
+	fmt.Println("QueryRow(구조체):", user)
 
 	// 값비교
 	if name != user.Name {
