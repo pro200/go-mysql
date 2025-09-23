@@ -74,7 +74,7 @@ func New(config Config) (*Database, error) {
 
 	db.SetConnMaxLifetime(time.Hour * time.Duration(config.ConnMaxHour)) // 0 means unlimited
 	db.SetMaxOpenConns(128)                                              // <= 0 means unlimited
-	db.SetMaxIdleConns(config.MaxIdleConns)                              // 0 or negative means defaultMaxIdleConns = 2
+	db.SetMaxIdleConns(config.MaxIdleConns)                              // <= 0 means defaultMaxIdleConns = 2
 
 	database := &Database{client: db}
 
