@@ -4,7 +4,7 @@ go 1.25.1
 
 require (
 	github.com/go-sql-driver/mysql v1.9.3
-	github.com/pro200/go-env v1.0.1
+	github.com/pro200/go-env v1.0.2
 )
 
 require (
