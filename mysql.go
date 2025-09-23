@@ -15,8 +15,8 @@ import (
 type Config struct {
 	Name         string // database 이름 (기본값: "main")
 	Host         string
-	Port         int
-	Protocol     string
+	Port         int    // (기본값: 3306)
+	Protocol     string // (기본값: "tcp")
 	Username     string
 	Password     string
 	Database     string
