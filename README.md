@@ -6,7 +6,7 @@ Go 언어에서 [`database/sql`](https://pkg.go.dev/database/sql) 과 [`go-sql-d
 ---
 
 ## ✨ 특징
-- 멀티 DB 연결 지원 (`Databases["name"]`)
+- 멀티 DB 연결 지원 (`GetDatabase("name")`)
 - `db` 태그 기반 구조체 매핑
 - 단일 행(`QueryRow`) / 다중 행(`Query`) 조회 지원
 - `Exec`, `ExecOne` (LIMIT 1 자동 추가) 지원
