@@ -43,7 +43,7 @@ func TestMysql(t *testing.T) {
 		Port:     config.GetInt("PORT"),
 	})
 	if err != nil {
-		log.Fatal("DB 연결 실패:", err)
+		t.Error("DB 연결 실패:", err)
 	}
 	defer db.Close()
 
