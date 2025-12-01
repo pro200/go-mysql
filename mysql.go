@@ -85,7 +85,7 @@ func New(config Config) (*Database, error) {
 	return database, nil
 }
 
-func GetDatabase(name ...string) (*Database, error) {
+func Load(name ...string) (*Database, error) {
 	dbMu.RLock()
 	defer dbMu.RUnlock()
 

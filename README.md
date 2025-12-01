@@ -6,7 +6,7 @@ Go 언어에서 [`database/sql`](https://pkg.go.dev/database/sql) 과 [`go-sql-d
 ---
 
 ## ✨ 특징
-- 멀티 DB 연결 지원 (`GetDatabase("name")`)
+- 멀티 DB 연결 지원 (`Load("name")`)
 - `db` 태그 기반 구조체 매핑
 - 단일 행(`QueryRow`) / 다중 행(`Query`) 조회 지원
 - `Exec`, `ExecOne` (LIMIT 1 자동 추가) 지원
@@ -110,7 +110,7 @@ New(config Config) (*Database, error)
 - 새로운 DB 연결 생성 및 등록
 - 기본값: Name="main", Port=3306, Protocol=tcp, ConnMaxHour=1, MaxOpenConns=128, MaxIdleConns=10,
 
-GetDatabase(name ...string) (*Database, error)
+Load(name ...string) (*Database, error)
 - 등록된 DB 핸들 가져오기 (기본: "main")
 
 QueryRow(query string, args ...any) error
