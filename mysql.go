@@ -2,18 +2,15 @@ package mysql
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"reflect"
 	"strings"
-	"sync"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 type Config struct {
-	Name         string // database 이름 (기본값: "main")
 	Host         string
 	Port         int    // (기본값: 3306)
 	Protocol     string // (기본값: "tcp")
@@ -29,16 +26,8 @@ type Database struct {
 	client *sql.DB
 }
 
-var (
-	Databases = make(map[string]*Database)
-	dbMu      sync.RWMutex // 동시성 안전 보장
-)
-
 // New 생성자
-func New(config Config) (*Database, error) {
-	if config.Name == "" {
-		config.Name = "main"
-	}
+func NewDatabase(config Config) (*Database, error) {
 	if config.Port == 0 {
 		config.Port = 3306
 	}
@@ -76,33 +65,7 @@ func New(config Config) (*Database, error) {
 	db.SetMaxOpenConns(128)                                              // <= 0 means unlimited
 	db.SetMaxIdleConns(config.MaxIdleConns)                              // <= 0 means defaultMaxIdleConns = 2
 
-	database := &Database{client: db}
-
-	dbMu.Lock()
-	Databases[config.Name] = database
-	dbMu.Unlock()
-
-	return database, nil
-}
-
-func Load(name ...string) (*Database, error) {
-	dbMu.RLock()
-	defer dbMu.RUnlock()
-
-	if len(Databases) == 0 {
-		return nil, errors.New("no databases available")
-	}
-
-	dbName := "main"
-	if len(name) > 0 {
-		dbName = name[0]
-	}
-
-	db, ok := Databases[dbName]
-	if !ok {
-		return nil, fmt.Errorf("database %s not found", dbName)
-	}
-	return db, nil
+	return &Database{client: db}, nil
 }
 
 // map column name -> struct field index
