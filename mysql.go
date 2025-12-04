@@ -224,6 +224,10 @@ func (db *Database) ExecOne(query string, args ...any) (sql.Result, error) {
 	return db.client.Exec(query, args...)
 }
 
+func (db *Database) Ping() error {
+	return db.client.Ping()
+}
+
 func (db *Database) Close() error {
 	return db.client.Close()
 }
