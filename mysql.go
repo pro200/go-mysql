@@ -98,6 +98,10 @@ func mapColumnsToFields(cols []string, elem reflect.Value) ([]interface{}, error
 
 // 단일 Row 조회 → dest는 반드시 포인터(struct or 기본 타입)
 func (db *Database) QueryRow(query string, args ...any) error {
+	if db == nil {
+		return fmt.Errorf("database is not initialized")
+	}
+
 	if len(args) == 0 {
 		return fmt.Errorf("no destination provided")
 	}
@@ -162,6 +166,10 @@ func (db *Database) QueryRow(query string, args ...any) error {
 
 // 다중 Row 조회 → dest는 반드시 *[]Struct 포인터
 func (db *Database) Query(query string, args ...any) error {
+	if db == nil {
+		return fmt.Errorf("database is not initialized")
+	}
+
 	if len(args) == 0 {
 		return fmt.Errorf("need more args")
 	}
@@ -214,20 +222,34 @@ func (db *Database) Query(query string, args ...any) error {
 }
 
 func (db *Database) Exec(query string, args ...any) (sql.Result, error) {
+	if db == nil {
+		return nil, fmt.Errorf("database is not initialized")
+	}
+
 	return db.client.Exec(query, args...)
 }
 
 func (db *Database) ExecOne(query string, args ...any) (sql.Result, error) {
-	if !strings.Contains(strings.ToUpper(query), "LIMIT") {
+	if db == nil {
+		return nil, fmt.Errorf("database is not initialized")
+	}
+
+	if !strings.Contains(strings.ToUpper(query), "INSERT") && !strings.Contains(strings.ToUpper(query), "LIMIT") {
 		query = fmt.Sprintf("%s LIMIT 1", query)
 	}
 	return db.client.Exec(query, args...)
 }
 
 func (db *Database) Ping() error {
+	if db == nil {
+		return fmt.Errorf("database is not initialized")
+	}
 	return db.client.Ping()
 }
 
 func (db *Database) Close() error {
+	if db == nil {
+		return fmt.Errorf("database is not initialized")
+	}
 	return db.client.Close()
 }
