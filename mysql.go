@@ -2,12 +2,24 @@ package mysql
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"reflect"
 	"strings"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+)
+
+var (
+	ErrNoResult             = errors.New("no query results")
+	ErrNotInitialized       = errors.New("database is not initialized")
+	ErrNoDestination        = errors.New("no destination provided")
+	ErrNoDestinationPointer = errors.New("no destination pointer provided")
+	ErrMustBePonter         = errors.New("destination must be a pointer")
+	ErrMustBePonterSlice    = errors.New("destination must be a pointer to a slice")
+	ErrMustBeStructs        = errors.New("elements of destination must be structs")
+	ErrNeedMoreArgs         = errors.New("need more args")
 )
 
 type Config struct {
@@ -99,11 +111,11 @@ func mapColumnsToFields(cols []string, elem reflect.Value) ([]interface{}, error
 // 단일 Row 조회 → dest는 반드시 포인터(struct or 기본 타입)
 func (db *Database) QueryRow(query string, args ...any) error {
 	if db == nil {
-		return fmt.Errorf("database is not initialized")
+		return ErrNotInitialized
 	}
 
 	if len(args) == 0 {
-		return fmt.Errorf("no destination provided")
+		return ErrNoDestination
 	}
 
 	// values, dests를 분리
@@ -116,14 +128,14 @@ func (db *Database) QueryRow(query string, args ...any) error {
 	}
 
 	if len(dests) == 0 {
-		return fmt.Errorf("no destination pointer provided")
+		return ErrNoDestinationPointer
 	}
 
 	// 마지막 dest
 	dest := dests[len(dests)-1]
 	destVal := reflect.ValueOf(dest)
 	if destVal.Kind() != reflect.Ptr {
-		return fmt.Errorf("destination must be a pointer")
+		return ErrMustBePonter
 	}
 
 	// 기본 포인터 매핑
@@ -143,7 +155,7 @@ func (db *Database) QueryRow(query string, args ...any) error {
 	defer rows.Close()
 
 	if !rows.Next() {
-		return sql.ErrNoRows
+		return ErrNoResult
 	}
 
 	cols, err := rows.Columns()
@@ -167,25 +179,25 @@ func (db *Database) QueryRow(query string, args ...any) error {
 // 다중 Row 조회 → dest는 반드시 *[]Struct 포인터
 func (db *Database) Query(query string, args ...any) error {
 	if db == nil {
-		return fmt.Errorf("database is not initialized")
+		return ErrNotInitialized
 	}
 
 	if len(args) == 0 {
-		return fmt.Errorf("need more args")
+		return ErrNeedMoreArgs
 	}
 	dest := args[len(args)-1]
 	values := args[:len(args)-1]
 
 	destVal := reflect.ValueOf(dest)
 	if destVal.Kind() != reflect.Ptr || destVal.Elem().Kind() != reflect.Slice {
-		return fmt.Errorf("dest must be a pointer to a slice")
+		return ErrMustBePonterSlice
 	}
 
 	sliceVal := destVal.Elem()
 	elemType := sliceVal.Type().Elem()
 
 	if elemType.Kind() != reflect.Struct {
-		return fmt.Errorf("elements of dest must be structs")
+		return ErrMustBeStructs
 	}
 
 	rows, err := db.client.Query(query, values...)
@@ -199,6 +211,7 @@ func (db *Database) Query(query string, args ...any) error {
 		return err
 	}
 
+	var count int
 	for rows.Next() {
 		elem := reflect.New(elemType).Elem()
 
@@ -212,10 +225,15 @@ func (db *Database) Query(query string, args ...any) error {
 		}
 
 		sliceVal.Set(reflect.Append(sliceVal, elem))
+		count++
 	}
 
 	if err := rows.Err(); err != nil {
 		return err
+	}
+
+	if count == 0 {
+		return ErrNoResult
 	}
 
 	return nil
@@ -223,7 +241,7 @@ func (db *Database) Query(query string, args ...any) error {
 
 func (db *Database) Exec(query string, args ...any) (sql.Result, error) {
 	if db == nil {
-		return nil, fmt.Errorf("database is not initialized")
+		return nil, ErrNotInitialized
 	}
 
 	return db.client.Exec(query, args...)
@@ -231,7 +249,7 @@ func (db *Database) Exec(query string, args ...any) (sql.Result, error) {
 
 func (db *Database) ExecOne(query string, args ...any) (sql.Result, error) {
 	if db == nil {
-		return nil, fmt.Errorf("database is not initialized")
+		return nil, ErrNotInitialized
 	}
 
 	if !strings.Contains(strings.ToUpper(query), "INSERT") && !strings.Contains(strings.ToUpper(query), "LIMIT") {
@@ -242,14 +260,14 @@ func (db *Database) ExecOne(query string, args ...any) (sql.Result, error) {
 
 func (db *Database) Ping() error {
 	if db == nil {
-		return fmt.Errorf("database is not initialized")
+		return ErrNotInitialized
 	}
 	return db.client.Ping()
 }
 
 func (db *Database) Close() error {
 	if db == nil {
-		return fmt.Errorf("database is not initialized")
+		return ErrNotInitialized
 	}
 	return db.client.Close()
 }
