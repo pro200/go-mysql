@@ -23,8 +23,7 @@ var (
 )
 
 type Config struct {
-	Host         string
-	Port         int    // (기본값: 3306)
+	Host         string // host(:port)
 	Protocol     string // (기본값: "tcp")
 	Username     string
 	Password     string
@@ -40,9 +39,6 @@ type Database struct {
 
 // New 생성자
 func NewDatabase(config Config) (*Database, error) {
-	if config.Port == 0 {
-		config.Port = 3306
-	}
 	if config.Protocol == "" {
 		config.Protocol = "tcp"
 	}
@@ -60,8 +56,8 @@ func NewDatabase(config Config) (*Database, error) {
 		config.MaxIdleConns = 10
 	}
 
-	option := fmt.Sprintf("%s:%s@%s(%s:%d)/%s?parseTime=true",
-		config.Username, config.Password, config.Protocol, config.Host, config.Port, config.Database)
+	option := fmt.Sprintf("%s:%s@%s(%s)/%s?parseTime=true",
+		config.Username, config.Password, config.Protocol, config.Host, config.Database)
 
 	db, err := sql.Open("mysql", option)
 	if err != nil {
