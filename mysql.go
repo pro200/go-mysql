@@ -33,12 +33,12 @@ type Config struct {
 	MaxIdleConns int // <= 0 means 10 (기본값: 10)
 }
 
-type Database struct {
+type Mysql struct {
 	client *sql.DB
 }
 
 // New 생성자
-func NewDatabase(config Config) (*Database, error) {
+func New(config Config) (*Mysql, error) {
 	if config.Protocol == "" {
 		config.Protocol = "tcp"
 	}
@@ -73,7 +73,7 @@ func NewDatabase(config Config) (*Database, error) {
 	db.SetMaxOpenConns(128)                                              // <= 0 means unlimited
 	db.SetMaxIdleConns(config.MaxIdleConns)                              // <= 0 means defaultMaxIdleConns = 2
 
-	return &Database{client: db}, nil
+	return &Mysql{client: db}, nil
 }
 
 // map column name -> struct field index
@@ -105,7 +105,7 @@ func mapColumnsToFields(cols []string, elem reflect.Value) ([]interface{}, error
 }
 
 // 단일 Row 조회 → dest는 반드시 포인터(struct or 기본 타입)
-func (db *Database) QueryRow(query string, args ...any) error {
+func (db *Mysql) QueryRow(query string, args ...any) error {
 	if db == nil {
 		return ErrNotInitialized
 	}
@@ -173,7 +173,7 @@ func (db *Database) QueryRow(query string, args ...any) error {
 }
 
 // 다중 Row 조회 → dest는 반드시 *[]Struct 포인터
-func (db *Database) Query(query string, args ...any) error {
+func (db *Mysql) Query(query string, args ...any) error {
 	if db == nil {
 		return ErrNotInitialized
 	}
@@ -235,7 +235,7 @@ func (db *Database) Query(query string, args ...any) error {
 	return nil
 }
 
-func (db *Database) Exec(query string, args ...any) (sql.Result, error) {
+func (db *Mysql) Exec(query string, args ...any) (sql.Result, error) {
 	if db == nil {
 		return nil, ErrNotInitialized
 	}
@@ -243,7 +243,7 @@ func (db *Database) Exec(query string, args ...any) (sql.Result, error) {
 	return db.client.Exec(query, args...)
 }
 
-func (db *Database) ExecOne(query string, args ...any) (sql.Result, error) {
+func (db *Mysql) ExecOne(query string, args ...any) (sql.Result, error) {
 	if db == nil {
 		return nil, ErrNotInitialized
 	}
@@ -254,14 +254,14 @@ func (db *Database) ExecOne(query string, args ...any) (sql.Result, error) {
 	return db.client.Exec(query, args...)
 }
 
-func (db *Database) Ping() error {
+func (db *Mysql) Ping() error {
 	if db == nil {
 		return ErrNotInitialized
 	}
 	return db.client.Ping()
 }
 
-func (db *Database) Close() error {
+func (db *Mysql) Close() error {
 	if db == nil {
 		return ErrNotInitialized
 	}

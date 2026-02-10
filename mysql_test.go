@@ -35,12 +35,11 @@ func TestMysql(t *testing.T) {
 	}
 
 	// MYSQL 연결
-	db, err := mysql.NewDatabase(mysql.Config{
+	db, err := mysql.New(mysql.Config{
 		Host:     config.Get("HOST"),
 		Username: config.Get("USERNAME"),
 		Password: config.Get("PASSWORD"),
 		Database: config.Get("DATABASE"),
-		Port:     config.GetInt("PORT"),
 	})
 	if err != nil {
 		t.Error("DB 연결 실패:", err)
