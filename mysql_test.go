@@ -5,7 +5,7 @@ import (
 	"log"
 	"testing"
 
-	"github.com/pro200/go-env"
+	"github.com/pro200/go-config"
 	"github.com/pro200/go-mysql"
 )
 
@@ -29,17 +29,17 @@ INSERT INTO users (id, name, email) VALUES
 */
 
 func TestMysql(t *testing.T) {
-	config, err := env.New()
+	cfg, err := config.New()
 	if err != nil {
 		t.Error(err)
 	}
 
 	// MYSQL 연결
 	db, err := mysql.New(mysql.Config{
-		Host:     config.Get("HOST"),
-		Username: config.Get("USERNAME"),
-		Password: config.Get("PASSWORD"),
-		Database: config.Get("DATABASE"),
+		Host:     cfg.Get("HOST"),
+		Username: cfg.Get("USERNAME"),
+		Password: cfg.Get("PASSWORD"),
+		Database: cfg.Get("DATABASE"),
 	})
 	if err != nil {
 		t.Error("DB 연결 실패:", err)

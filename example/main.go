@@ -4,22 +4,22 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/pro200/go-env"
+	"github.com/pro200/go-config"
 	"github.com/pro200/go-mysql"
 )
 
 func main() {
-	config, err := env.New()
+	cfg, err := config.New()
 	if err != nil {
 		panic(err)
 	}
 
 	// MYSQL 연결
 	db, err := mysql.New(mysql.Config{
-		Host:     config.Get("HOST"),
-		Username: config.Get("USERNAME"),
-		Password: config.Get("PASSWORD"),
-		Database: config.Get("DATABASE"),
+		Host:     cfg.Get("HOST"),
+		Username: cfg.Get("USERNAME"),
+		Password: cfg.Get("PASSWORD"),
+		Database: cfg.Get("DATABASE"),
 	})
 	if err != nil {
 		panic(err)

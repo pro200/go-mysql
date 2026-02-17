@@ -4,9 +4,7 @@ github.com/go-sql-driver/mysql v1.9.3 h1:U/N249h2WzJ3Ukj8SowVFjdtZKfu9vlLZxjPXV1
 github.com/go-sql-driver/mysql v1.9.3/go.mod h1:qn46aNg1333BRMNU69Lq93t8du/dwxI64Gl8i5p1WMU=
 github.com/joho/godotenv v1.5.1 h1:7eLL/+HRGLY0ldzfGMeQkb7vMd0as4CfYvUVzLqw0N0=
 github.com/joho/godotenv v1.5.1/go.mod h1:f4LDr5Voq0i2e/R5DDNOoa2zzDfwtkZa6DnEwAbqwq4=
-github.com/pro200/go-env v1.0.1 h1:x2lq6FZhF/kt00g70A6fexR5ANgmvmasZ+9DeH0nD2w=
-github.com/pro200/go-env v1.0.1/go.mod h1:6cjGKKRUsyJ+3yucVT9upatGScddURTjU31NdMzkQnY=
-github.com/pro200/go-env v1.0.2 h1:vVZNl+ODQlV1oYSDl1eGlDoFfYcH5LpIBnjGsZ/gCOs=
-github.com/pro200/go-env v1.0.2/go.mod h1:6cjGKKRUsyJ+3yucVT9upatGScddURTjU31NdMzkQnY=
+github.com/pro200/go-config v1.0.1 h1:MJoSE5Ai49L6jXMDMRsCH7A6kL4tILWJKC9NkpmS3sw=
+github.com/pro200/go-config v1.0.1/go.mod h1:sshJJHfljiDvltB6r4bbGENH6NMuZ4q0K9MqCCIHhD0=
 github.com/pro200/go-env v1.0.3 h1:Uu/iwtoDvEjH9aeEkt5q4XoI+5Nn2daykbQnAd+8NG0=
 github.com/pro200/go-env v1.0.3/go.mod h1:6cjGKKRUsyJ+3yucVT9upatGScddURTjU31NdMzkQnY=
